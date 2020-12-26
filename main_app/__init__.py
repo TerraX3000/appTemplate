@@ -1,4 +1,5 @@
 from flask import Flask
+from importlib import import_module
 
 # from flask_sqlalchemy import SQLAlchemy
 # from sqlalchemy import event, MetaData
@@ -18,6 +19,15 @@ from flask import Flask
 #     login_user,
 #     logout_user,
 # )
+
+
+def register_blueprints(app):
+    for module_name in ["main", "app_function"]:
+        module = import_module("main_app.{}.routes".format(module_name))
+        # module_bp = module_name + "_bp"
+        # blueprint = getattr(module, module_bp)
+        # app.register_blueprint(blueprint)
+        app.register_blueprint(module.bp)
 
 
 # This function is necessary to perform cacade deletes in SQLite
@@ -85,8 +95,6 @@ def create_app(config_class):
         #     client_kwargs={"scope": "openid email profile"},
         # )
 
-    from main_app.main.routes import main_bp
-
-    app.register_blueprint(main_bp)
+    register_blueprints(app)
 
     return app
